@@ -1,0 +1,42 @@
+// Loopline's capture agent. Its only job is to sit there and listen well —
+// all the thinking (segmentation, classification, filing) happens AFTER the
+// session ends, in processor/pipeline.py. That split is deliberate: nothing
+// about the MCP integrations can break mid-call if they only run afterward.
+//
+// https://www.assemblyai.com/docs/voice-agents/voice-agent-api/create-agent
+{
+  "name": "Loopline",
+
+  // Deliberately non-chatty. This agent should feel like it's taking notes,
+  // not having a conversation. It should almost never speak.
+  "system_prompt": "You are an ambient listening agent. The person is thinking out loud, possibly about several unrelated things in one breath: bugs, ideas, reminders, decisions. Your only job is to listen. Do not ask follow-up questions. Do not summarize what they said. Do not offer opinions or suggestions. The only time you speak is if there is a long silence (several seconds) after they've clearly stopped talking - in that case, say a short one-line acknowledgement like 'Got it, keep going whenever you're ready' or 'Still listening.' Never interrupt mid-thought.",
+
+  // Said once, when the call connects.
+  "greeting": "Go ahead, I'm listening.",
+
+  "voice": { "voice_id": "anna" },
+
+  "input": {
+    // Bias transcription toward names that matter for correct routing later.
+    // A mangled repo or person name here means a wrong destination later.
+    // Add your own project names, repo names, and people you'll mention.
+    "keyterms": [
+      "Loopline",
+      "Karigar AI",
+      "GitHub",
+      "Notion"
+    ],
+
+    // Patient by design: this agent should let you finish a rambling
+    // thought, not jump in the first time you pause for breath.
+    "turn_detection": {
+      "vad_threshold": 0.5,
+      "min_silence": 2500,
+      "max_silence": 6000,
+      "interrupt_response": true
+    }
+  }
+
+  // No "tools" here on purpose. Segmentation, classification, and MCP calls
+  // to GitHub/Notion all happen after the session ends - see processor/.
+}
