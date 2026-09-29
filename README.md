@@ -196,5 +196,4 @@ don't burn time on this unless GitHub is completely solid first.
 
 If either of those needs adjusting, the error messages are written to tell
 you exactly what to change and where.
-#   L o o p L i n e  
- 
+#
