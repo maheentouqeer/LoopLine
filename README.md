@@ -151,25 +151,6 @@ https://www.assemblyai.com/docs/voice-agents/voice-agent-api/test-with-bluejay
 four), a long silence, something genuinely ambiguous (low confidence), and
 speech with a lot of filler words.
 
-## Deploy
-
-```bash
-git init && git add -A && git commit -m "Loopline"
-git remote add origin <your-empty-github-repo-url>
-git push -u origin main
-```
-
-Then on Render: **New → Blueprint**, point it at this repo — `render.yaml`
-handles the rest. It will prompt for `ASSEMBLYAI_API_KEY`, `GITHUB_PAT`, and
-`GITHUB_REPO`. Free tier cold-starts after inactivity, so open the deployed
-URL yourself a few minutes before you demo it to judges.
-
-**Notion on Render:** the Notion client spawns `npx` as a subprocess, which
-needs Node available in the runtime. Render's plain Python service doesn't
-include it. If you build the Notion stretch goal, it'll work locally (where
-you already have Node) but needs a Docker-based Render service to deploy —
-don't burn time on this unless GitHub is completely solid first.
-
 ## Governance (why some things are deliberately conservative)
 
 - Nothing is filed silently. Processing only runs when you click the
@@ -180,20 +161,3 @@ don't burn time on this unless GitHub is completely solid first.
   widen it.
 - `classify.py`'s prompt explicitly tells the model to mark anything that
   looks like a password or secret as `skip` rather than filing it anywhere.
-
-## Honest notes on things I couldn't verify for you
-
-- **The exact MCP tool names GitHub and Notion expose** aren't hardcoded
-  blindly — both clients look at what the server actually lists and pick a
-  matching name from a short candidate list (see `CREATE_ISSUE_CANDIDATES`
-  / `CREATE_PAGE_CANDIDATES`). If a server updates and renames its tool,
-  the error message tells you the real name so you can fix one line.
-- **The exact shape of the session `timeline` artifact** — AssemblyAI's own
-  docs describe it as "each turn pairing `user_transcript` with
-  `agent_text`," but `fetch_session.py` is written to tolerate a couple of
-  plausible variations, and to print the raw JSON if it genuinely can't
-  find the transcript, rather than silently extracting nothing.
-
-If either of those needs adjusting, the error messages are written to tell
-you exactly what to change and where.
-#
